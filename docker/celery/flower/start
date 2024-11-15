@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+worker_ready() {
+    celery -A config.rabbitmq.connection.app --broker=amqp://"${RABBITMQ_DEFAULT_USER}":"${RABBITMQ_DEFAULT_PASS}"@"${RMQ_HOST}":"${RMQ_PORT}" inspect ping
+}
+
+until worker_ready; do
+  >&2 echo 'Celery workers not available'
+  sleep 1
+done
+>&2 echo 'Celery workers is available'
+
+celery -A config.rabbitmq.connection.app \
+ --broker=amqp://"${RABBITMQ_DEFAULT_USER}":"${RABBITMQ_DEFAULT_PASS}"@"${RMQ_HOST}":"${RMQ_PORT}" \
+ flower
