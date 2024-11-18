@@ -1,6 +1,11 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel
 from starlette.config import Config
+
+
+base_dir = Path(__file__).resolve().parent.parent.parent
+log_dir = base_dir.joinpath('logs')
 
 
 config = Config('.env')
@@ -47,6 +52,8 @@ class Settings(BaseSettings):
     rabbit: RabbitSettings = RabbitSettings()
     debug: bool = bool(int(config('DEBUG')))
     API_PREFIX: str = '/api/v1'
+    BASE_DIR: Path = base_dir
+    LOG_DIR: Path = log_dir
 
 
 settings = Settings()
