@@ -1,12 +1,13 @@
 import json
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from http import HTTPStatus
 
 from config.setup_logs.logging import logger
-from api_v1 import ValidationError
+from api_v1.exeptions import ValidationError
 
 
 def register_errors(app: FastAPI) -> None:
@@ -24,8 +25,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=422,
             message=exc.detail,
         )
-        json_response = json.dumps(response).encode(encoding='utf-8')
-        return json_response
+        return JSONResponse(response)
 
     @app.exception_handler(HTTPException)
     async def http_error_handler(
@@ -41,8 +41,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        json_response = json.dumps(response).encode(encoding='utf-8')
-        return json_response
+        return JSONResponse(response)
 
     @app.exception_handler(Exception)
     async def error_handler(
@@ -58,8 +57,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=500,
             message=HTTPStatus(500).phrase,
         )
-        json_response = json.dumps(response).encode(encoding='utf-8')
-        return json_response
+        return JSONResponse(response)
 
     @app.exception_handler(StarletteHTTPException)
     async def validation_error_handler(
@@ -75,5 +73,4 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        json_response = json.dumps(response).encode(encoding='utf-8')
-        return json_response
+        return JSONResponse(response)

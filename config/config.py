@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from starlette.config import Config
 
 
-base_dir = Path(__file__).resolve().parent.parent.parent
+base_dir = Path(__file__).resolve().parent.parent
 log_dir = base_dir.joinpath('logs')
 
 

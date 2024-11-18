@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import db_connection
+from api_v1.exeptions import ValidationError
 
 
 router = APIRouter(prefix='/users',
@@ -17,4 +18,5 @@ async def get_user(
     session: AsyncSession = Depends(db_connection.session_geter),
     ):
     session = session
-    return {'user': 'is_work'}
+    raise ValidationError(status_code=status.HTTP_400_BAD_REQUEST,
+                          detail=dict(some='Some is wrong'))

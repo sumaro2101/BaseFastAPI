@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from config import db_connection, BaseModel
 from api_v1 import register_routers
 from app_includes import register_errors
-from config.setup_logs import create_log_dirs
 
 
 
@@ -12,7 +11,6 @@ def start_app() -> FastAPI:
     """
     Создание приложения со всеми настройками
     """
-    create_log_dirs()
     app = FastAPI(lifespan=lifespan)
     register_routers(app=app)
     register_errors(app=app)

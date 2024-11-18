@@ -4,21 +4,13 @@ from loguru import logger
 from config import settings
 
 
-log_dir = settings.LOG_DIR
-
-
-def create_log_dirs() -> None:
-    """
-    Создание корневой папки для логов
-    """    
-    log_directory = settings.LOG_DIR
-    log_directory.mkdir(parents=True, exist_ok=True)
-
+log_directory = settings.LOG_DIR
+log_directory.mkdir(parents=True, exist_ok=True)
 
 logger.remove()
 
 logger.add(
-    log_dir.joinpath('access.log'),
+    log_directory.joinpath('access.log'),
     rotation='15MB',
     format='{time:YYYY-MM-DD HH:mm:ss} - {level} - {message}',
     encoding='utf-8',
@@ -31,7 +23,7 @@ logger.add(
 )
 
 logger.add(
-    log_dir.joinpath('error.log'),
+    log_directory.joinpath('error.log'),
     rotation='15MB',
     format='{time:YYYY-MM-DD HH:mm:ss} - {level} - {message}',
     encoding='utf-8',
