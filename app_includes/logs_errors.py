@@ -5,7 +5,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from http import HTTPStatus
 
-from logs.logging import logger
+from config.setup_logs.logging import logger
 from api_v1 import ValidationError
 
 
@@ -50,30 +50,30 @@ def register_errors(app: FastAPI) -> None:
         exc: Exception,
         ):
         """
-        Логирование всех StarletteHTTPException
+        Логирование всех Exception
         """
         logger.exception(exc)
         response = dict(
             status=False,
-            error_code=exc.status_code,
-            message=exc.detail,
+            error_code=500,
+            message=HTTPStatus(500).phrase,
         )
         json_response = json.dumps(response).encode(encoding='utf-8')
         return json_response
 
-    @app.exception_handler(ValidationError)
+    @app.exception_handler(StarletteHTTPException)
     async def validation_error_handler(
         request: Request,
-        exc: ValidationError,
+        exc: StarletteHTTPException,
         ):
         """
-        Логирование всех ValidationError
+        Логирование всех StarletteHTTPException
         """
         logger.opt(exception=True).warning(exc)
         response = dict(
             status=False,
-            error_code=500,
-            message=HTTPStatus(500).phrase,
+            error_code=exc.status_code,
+            message=exc.detail,
         )
         json_response = json.dumps(response).encode(encoding='utf-8')
         return json_response
