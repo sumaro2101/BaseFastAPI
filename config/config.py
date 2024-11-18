@@ -46,6 +46,7 @@ class Settings(BaseSettings):
     db: DBSettings = DBSettings()
     rabbit: RabbitSettings = RabbitSettings()
     debug: bool = bool(int(config('DEBUG')))
+    API_PREFIX: str = '/api/v1'
 
 
 settings = Settings()

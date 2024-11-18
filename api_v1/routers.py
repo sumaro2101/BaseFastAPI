@@ -1,4 +1,11 @@
-from fastapi import APIRouter
+from fastapi import FastAPI
+
+from config import settings
+from api_v1.users.views import router
 
 
-router = APIRouter(prefix='/api/v1')
+def register_routers(app: FastAPI) -> None:
+    app.include_router(
+        router=router,
+        prefix=settings.API_PREFIX,
+        )
