@@ -22,7 +22,7 @@ def register_errors(app: FastAPI) -> None:
         logger.opt(exception=True).warning(exc)
         response = dict(
             status=False,
-            error_code=422,
+            error_code=exc.status_code,
             message=exc.detail,
         )
         return JSONResponse(response)
