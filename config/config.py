@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     API_PREFIX: str = '/api/v1'
     BASE_DIR: Path = base_dir
     LOG_DIR: Path = log_dir
+    CURRENT_ORIGIN: str = config('CURRENT_ORIGIN')
 
 
 settings = Settings()
