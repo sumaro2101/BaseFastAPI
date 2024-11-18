@@ -1,3 +1,4 @@
-from .routers import router
+from .routers import register_routers
 
-__all__ = ('router',)
+
+__all__ = ('register_routers',)

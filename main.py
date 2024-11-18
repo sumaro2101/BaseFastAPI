@@ -1,7 +1,25 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+
 from config import db_connection, BaseModel
-from api_v1 import router
+from api_v1 import register_routers
+from app_includes import (
+    register_errors,
+    register_middlewares,
+    register_prometheus,
+    )
+
+
+def start_app() -> FastAPI:
+    """
+    Создание приложения со всеми настройками
+    """
+    app = FastAPI(lifespan=lifespan)
+    register_routers(app=app)
+    register_errors(app=app)
+    register_middlewares(app=app)
+    register_prometheus(app=app)
+    return app
 
 
 @asynccontextmanager
@@ -12,5 +30,4 @@ async def lifespan(app: FastAPI):
     await db_connection.dispose()
 
 
-app = FastAPI(lifespan=lifespan)
-app.include_router(router=router)
+app = start_app()

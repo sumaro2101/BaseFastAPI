@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 
 worker_ready() {
-    celery -A config.rabbitmq.connection.app --broker=amqp://"${RABBITMQ_DEFAULT_USER}":"${RABBITMQ_DEFAULT_PASS}"@"${RMQ_HOST}":"${RMQ_PORT}" inspect ping
+    celery -A config.celery.connection.app --broker=amqp://"${RABBITMQ_DEFAULT_USER}":"${RABBITMQ_DEFAULT_PASS}"@"${RMQ_HOST}":"${RMQ_PORT}" inspect ping
 }
 
 until worker_ready; do
@@ -13,6 +13,6 @@ until worker_ready; do
 done
 >&2 echo 'Celery workers is available'
 
-celery -A config.rabbitmq.connection.app \
+celery -A config.celery.connection.app \
  --broker=amqp://"${RABBITMQ_DEFAULT_USER}":"${RABBITMQ_DEFAULT_PASS}"@"${RMQ_HOST}":"${RMQ_PORT}" \
  flower
