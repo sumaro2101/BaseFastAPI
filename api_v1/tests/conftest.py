@@ -34,7 +34,7 @@ async def override_get_async_session():
 
 
 @pytest_asyncio.fixture(scope='session', autouse=True)
-async def app():
+async def app() -> AsyncGenerator[LifespanManager, Any]:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         async with db_setup.engine.begin() as conn:
