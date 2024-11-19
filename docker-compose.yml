@@ -68,6 +68,18 @@ services:
     env_file:
       - .env
 
+  test_db:
+    restart: always
+    image: postgres:16.3-alpine
+    volumes:
+      - test_postgres_data:/var/lib/postgresql/data/
+    hostname: test_db
+    expose:
+      - 5431
+    environment:
+      - POSTGRES_DB=${TEST_POSTGRES_DB}
+      - POSTGRES_PASSWORD=${TEST_POSTGRES_PASSWORD}
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -143,6 +155,7 @@ services:
 
 volumes:
   postgres_data:
+  test_postgres_data:
   rabbitmq-data:
   prometheus-data: {}
   grafana-data: {}

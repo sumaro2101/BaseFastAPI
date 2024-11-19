@@ -11,6 +11,13 @@ log_dir = base_dir.joinpath('logs')
 config = Config('.env')
 
 
+class TestDBSettings(BaseModel):
+    """
+    Настройки тестовой базы данных
+    """
+    
+
+
 class DBSettings(BaseModel):
     """
     Настройки DataBase
