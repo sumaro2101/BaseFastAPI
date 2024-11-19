@@ -49,8 +49,8 @@ services:
     command: /start-flower
     volumes:
       - .:/app
-    ports:
-      - 5555:5555
+    expose:
+      - 5555
     env_file:
       - .env
     depends_on:
@@ -67,6 +67,18 @@ services:
     hostname: db
     env_file:
       - .env
+
+  test_db:
+    restart: always
+    image: postgres:16.3-alpine
+    volumes:
+      - test_postgres_data:/var/lib/postgresql/data/
+    hostname: test_db
+    expose:
+      - 5431
+    environment:
+      - POSTGRES_DB=${TEST_POSTGRES_DB}
+      - POSTGRES_PASSWORD=${TEST_POSTGRES_PASSWORD}
 
   prometheus:
     image: prom/prometheus
@@ -112,9 +124,14 @@ services:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
     environment:
+      - DATABASE_USER=${DB_USER}
+      - DATABASE_PASS=${DB_PASSWORD}
+      - DATABASE_NAME=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST}
+      - DATABASE_SSL_MODE=disable
       - GF_USERS_ALLOW_SIGN_UP=false
-    env_file:
-      - .env
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
     restart: unless-stopped
     expose:
       - 3000
@@ -130,6 +147,7 @@ services:
       - "3000:3000"
       - "9090:9090"
       - "9093:9093"
+      - "5555:5555"
     volumes:
       - ./caddy:/etc/caddy
     environment:
@@ -143,6 +161,7 @@ services:
 
 volumes:
   postgres_data:
+  test_postgres_data:
   rabbitmq-data:
   prometheus-data: {}
   grafana-data: {}
