@@ -15,7 +15,12 @@ class TestDBSettings(BaseModel):
     """
     Настройки тестовой базы данных
     """
-    
+    _engine: str = config('TEST_DB_ENGINE')
+    _owner: str = config('TEST_DB_USER')
+    _password: str = config('TEST_DB_PASSWORD')
+    _name: str = config('TEST_DB_HOST')
+    _db_name: str = config('TEST_DB_NAME')
+    url: str = f'{_engine}://{_owner}:{_password}@{_name}/{_db_name}'
 
 
 class DBSettings(BaseModel):
@@ -56,6 +61,7 @@ class Settings(BaseSettings):
         extra='ignore',
     )
     db: DBSettings = DBSettings()
+    test_db: TestDBSettings = TestDBSettings()
     rabbit: RabbitSettings = RabbitSettings()
     debug: bool = bool(int(config('DEBUG')))
     API_PREFIX: str = '/api/v1'
