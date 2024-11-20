@@ -53,10 +53,10 @@ from config import settings
 
 # В этой функции нужно по порядку регистрировать routers
 def register_routers(app: FastAPI) -> None:
-app.include_router(
-    router=users,
-    prefix=settings.API_PREFIX,
-)
+    app.include_router(
+        router=users,
+        prefix=settings.API_PREFIX,
+    )
 ```
 После регистрации данные маршруты будут доступны.
 
