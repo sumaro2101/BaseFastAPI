@@ -1,4 +1,3 @@
-import json
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
@@ -15,7 +14,7 @@ def register_errors(app: FastAPI) -> None:
     async def validation_error_handler(
         request: Request,
         exc: ValidationError,
-        ):
+    ):
         """
         Логирование всех ValidationError
         """
@@ -31,7 +30,7 @@ def register_errors(app: FastAPI) -> None:
     async def http_error_handler(
         request: Request,
         exc: HTTPException,
-        ):
+    ):
         """
         Логирование всех HTTPException
         """
@@ -47,7 +46,7 @@ def register_errors(app: FastAPI) -> None:
     async def error_handler(
         request: Request,
         exc: Exception,
-        ):
+    ):
         """
         Логирование всех Exception
         """
@@ -63,7 +62,7 @@ def register_errors(app: FastAPI) -> None:
     async def validation_error_handler(
         request: Request,
         exc: StarletteHTTPException,
-        ):
+    ):
         """
         Логирование всех StarletteHTTPException
         """

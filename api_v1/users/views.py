@@ -16,7 +16,7 @@ router = APIRouter(prefix='/users',
             )
 async def get_user(
     session: AsyncSession = Depends(db_connection.session_geter),
-    ):
+):
     session = session
     raise ValidationError(status_code=status.HTTP_400_BAD_REQUEST,
                           detail=dict(some='Some is wrong'))
