@@ -132,7 +132,7 @@ async def time_sleep_task():
     """
     Тестовая задача для Celery
     """
-    asyncio.sleep(2.0)
+    await asyncio.sleep(2.0)
     return 'Task is done'
 ```
 - Затем добавить этот файл в список пакетов Celery
@@ -153,7 +153,7 @@ Cпособ реализации в **api_v1/tests/conftest.py**
 - Что бы написать тестовую функцию которой нужен доступ к API,
 вам нужно использовать fixture - client.
 > [!NOTE]
-> Для асинхронных тестов используйте **pytest.mark.asyncio**
+> Для асинхронных тестов используйте **@pytest.mark.asyncio**
 
 ```python
 # api_v1.tests.test_users.py

@@ -7,5 +7,5 @@ async def time_sleep_task():
     """
     Тестовая задача для Celery
     """
-    asyncio.sleep(2.0)
+    await asyncio.sleep(2.0)
     return 'Task is done'
