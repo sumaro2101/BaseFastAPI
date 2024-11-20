@@ -105,7 +105,7 @@ services:
     image: prom/alertmanager:v0.20.0
     container_name: alertmanager
     volumes:
-      - ./docker/alertmanager:/etc/alertmanager
+      - ./alertmanager:/etc/alertmanager
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
