@@ -30,64 +30,66 @@ docker compose up
 Обзор и детали данного шаблона
 ## Найболее используемые
 Найболее используемые конструкции с которыми приходится часто взаимодействовать.
-- registration routers
-    - В каждом приложений необходимо инициализировать router
-    ```python
-    # api/users/views.py
-    from fastapi import APIRouter
+### Registration Routers
+- В каждом приложений необходимо инициализировать router
+```python
+# api/users/views.py
+from fastapi import APIRouter
 
 
-    router = APIRouter(prefix='/users',
-                    tags=['Users'],
-                    )
-    ```
-    - Затем зарегистрировать роутер
-    ```python
-    # api_v1/routers.py
-    from api_v1.users.views import router as users
-
-
-    # В этой функции нужно по порядку регистрировать routers
-    def register_routers(app: FastAPI) -> None:
-    app.include_router(
-        router=users,
-        prefix=settings.API_PREFIX,
+router = APIRouter(
+    prefix='/users',
+    tags=['Users'],
     )
-    ```
-    После регистрации данные маршруты будут доступны.
-- registration logs
-    - Логи захватывают все исключения возникшие в системе
-    и с помошью дисперичизации распределяется по нужным **file.log**
-    ```python
-    # app_includes/logs_errors.py
-    from fastapi import FastAPI
-    from api_v1.exeptions import ValidationError
+```
+- Затем зарегистрировать роутер
+```python
+# api_v1/routers.py
+from api_v1.users.views import router as users
+from config import settings
 
 
-    # В данной функции регистрируются все исключения для захватывания Логами
-    def register_errors(app: FastAPI) -> None:
-        @app.exception_handler(ValidationError)
-        async def validation_error_handler(
-            request: Request,
-            exc: ValidationError,
-        ):
-            logger.opt(exception=True).warning(exc)
-            response = dict(
-                status=False,
-                error_code=exc.status_code,
-                message=exc.detail,
-            )
-            return JSONResponse(response)
-    ```
-    - Если вы пишете пользовательское исключение например:
-    ```python
-    from starlette.exceptions import HTTPException
+# В этой функции нужно по порядку регистрировать routers
+def register_routers(app: FastAPI) -> None:
+app.include_router(
+    router=users,
+    prefix=settings.API_PREFIX,
+)
+```
+После регистрации данные маршруты будут доступны.
+### Registration Logs
+- Логи захватывают все исключения возникшие в системе
+и с помошью дисперичизации распределяется по нужным **file.log**
+```python
+# app_includes/logs_errors.py
+from fastapi import FastAPI
+from api_v1.exeptions import ValidationError
 
 
-    class ValidationError(HTTPException):
+# В данной функции регистрируются все исключения для захватывания Логами
+def register_errors(app: FastAPI) -> None:
+    @app.exception_handler(ValidationError)
+    async def validation_error_handler(
+        request: Request,
+        exc: ValidationError,
+    ):
+        logger.opt(exception=True).warning(exc)
+        response = dict(
+            status=False,
+            error_code=exc.status_code,
+            message=exc.detail,
+        )
+        return JSONResponse(response)
+```
+- Если вы пишете пользовательское исключение например:
+```python
+from starlette.exceptions import HTTPException
 
-    pass
-    ```
-    То вам нужно его зарегистрировать как было показанно выше,
-    иначе logs не смогут выявить данное исключение и данные будут потеряны.
-- registration middlaware
+
+class ValidationError(HTTPException):
+
+pass
+```
+То вам нужно его зарегистрировать как было показанно выше,
+иначе logs не смогут выявить данное исключение и данные будут утеряны.
+### Registration Middlaware
