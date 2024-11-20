@@ -10,6 +10,9 @@ from api_v1.exeptions import ValidationError
 
 
 def register_errors(app: FastAPI) -> None:
+    """
+    Крючек для логирования различных исключений
+    """
     @app.exception_handler(ValidationError)
     async def validation_error_handler(
         request: Request,

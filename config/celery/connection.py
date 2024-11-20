@@ -9,7 +9,7 @@ import asyncio
 
 class Celery(celery.Celery):
     """
-    Инициализация Celery
+    Инициализация асинхронного Celery
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -41,4 +41,4 @@ class Celery(celery.Celery):
 
 app = Celery(__name__)
 app.conf.broker_url = settings.rabbit.broker_url
-app.autodiscover_tasks(packages=[])
+app.autodiscover_tasks(packages=['api_v1.users'])
