@@ -5,5 +5,5 @@ class ValidationError(HTTPException):
     """
     Исключение вызванное проблемами с валидацией
     """
-    
+
     pass

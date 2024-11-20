@@ -33,6 +33,7 @@ config.set_main_option(
     settings.db.url,
 )
 
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
