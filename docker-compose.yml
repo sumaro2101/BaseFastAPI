@@ -49,8 +49,8 @@ services:
     command: /start-flower
     volumes:
       - .:/app
-    expose:
-      - 5555
+    ports:
+      - 5555:5555
     env_file:
       - .env
     depends_on:
@@ -140,28 +140,6 @@ services:
     labels:
       org.label-schema.group: "monitoring"
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.1
-    container_name: cadvisor
-    privileged: true
-    platform: linux/aarch64
-    devices:
-      - "/dev/kmsg:/dev/kmsg"
-    volumes:
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /etc/machine-id:/etc/machine-id:ro
-      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
-    restart: unless-stopped
-    expose:
-      - 8081
-    networks:
-      - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
-
   nodeexporter:
     image: prom/node-exporter:v0.18.1
     container_name: nodeexporter
@@ -201,7 +179,6 @@ services:
       - "9090:9090"
       - "9093:9093"
       - "9091:9091"
-      - "5555:5555"
     volumes:
       - ./caddy:/etc/caddy
     environment:
