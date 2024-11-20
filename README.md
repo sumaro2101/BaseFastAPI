@@ -145,3 +145,29 @@ app.conf.broker_url = settings.rabbit.broker_url
 app.autodiscover_tasks(packages=['api_v1.users'])
 ```
 - После этих действий ваша task будет зарегистрирована
+
+### Test
+- Для тестирования у вас есть тестовая база данных, а так же
+уже инициализированный отдельный клиент.
+Cпособ реализации в **api_v1/tests/conftest.py**
+- Что бы написать тестовую функцию которой нужен доступ к API,
+вам нужно использовать fixture - client.
+> [!NOTE]
+> Для асинхронных тестов используйте **pytest.mark.asyncio**
+
+```python
+# api_v1.tests.test_users.py
+import pytest
+
+
+@pytest.mark.asyncio
+async def test_get_user_error(client: AsyncClient):
+    response = await client.get(
+        '/users/get',
+    )
+    assert response.status_code == 400
+```
+- Для запуска используйте команду
+```bash
+pytest
+```
