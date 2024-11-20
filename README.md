@@ -25,6 +25,8 @@ docker compose build
 docker compose up
 ```
 - После успешного запуска приложение будет доступно по адрессу: http://localhost:8080
+- Grafana: http://localhost:3000
+- Flower: http://localhost:5555
 
 # View
 Обзор и детали данного шаблона
@@ -57,6 +59,7 @@ app.include_router(
 )
 ```
 После регистрации данные маршруты будут доступны.
+
 ### Registration Logs
 - Логи захватывают все исключения возникшие в системе
 и с помошью дисперичизации распределяется по нужным **file.log**
@@ -92,4 +95,53 @@ pass
 ```
 То вам нужно его зарегистрировать как было показанно выше,
 иначе logs не смогут выявить данное исключение и данные будут утеряны.
+
 ### Registration Middlaware
+- Для регистрации Middlaware вам нужно добавить его в функцию
+```python
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
+
+from config import settings
+
+
+# Данная функция регистрирует все middleware
+def register_middlewares(app: FastAPI) -> None:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            settings.CURRENT_ORIGIN,
+        ],
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*'],
+    )
+```
+- При появлении новых middleware добавляйте их по порядку в эту функцию
+
+### Celery
+- Для регистрации task вам нужно создать файл с именем **tasks.py** в вашем приложении:
+```python
+# api_v1/users/tasks.py
+from config import celery_app
+import asyncio
+
+
+@celery_app.task
+async def time_sleep_task():
+    """
+    Тестовая задача для Celery
+    """
+    asyncio.sleep(2.0)
+    return 'Task is done'
+```
+- Затем добавить этот файл в список пакетов Celery
+```python
+# confin.celery.connection.py
+
+app = Celery(__name__)
+app.conf.broker_url = settings.rabbit.broker_url
+# Регистрация до окружения где находится tasks.py
+app.autodiscover_tasks(packages=['api_v1.users'])
+```
+- После этих действий ваша task будет зарегистрирована
