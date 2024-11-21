@@ -62,10 +62,12 @@ def register_routers(app: FastAPI) -> None:
 
 ### Registration Logs
 - Логи захватывают все исключения возникшие в системе
-и с помошью дисперичизации распределяется по нужным **file.log**
+и с помошью диспечиризации распределяется по нужным **file.log**
 ```python
 # app_includes/logs_errors.py
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+
 from api_v1.exeptions import ValidationError
 
 
