@@ -181,4 +181,4 @@ dump.rdb
 test.py
 
 # certs
-certs/
+certs/jwt*

@@ -1,175 +1,313 @@
 # Title
-Данный шаблон был разработан для одной цели - облегчения и повышения качества
-выполненых тестовых заданий в рамках **FastAPI**.
+Данный проект является большим онлайн магазином. (Стадия разработки)
 
-# Quick start
-Для тех кто уже знаком с реализацией и всеми деталями - могут приступить к установке.
-## Enviroments
-Необходимо заполнить **.env.sample** и в последствии перемеиновать его в **.env**
+# TO DO
+## Stripe
+Проект реализует интеграцию с внешним API платежной системы Stripe.
+Реализованны Классы для интеграции:
+- Stripe # Абстрактный класс определяющий каркасс
+- CreateStripeItem # Создание Stripe объекта
+- UpdateStripeItem # Обновление Stripe объекта
+- ActivateStipeItem # Активация Stripe объекта
+- DeactivateStripeItem # Деактивация Stripe объекта
+- StripeItems # Список Stripe объектов
+- CreateDiscountCoupon # Создание скидочного купона
+- UpdateDiscountCoupon # Обновление скидочного купона
+- DeleteDiscountCoupon # Удаление скидочного купона
+- StripeSession # Создание Stripe Сессии для оплаты
+- ExpireSession # Отмена Stripe Cессии
+
+Создание Stripe объекта
 ```python
-# .env.sample
-POSTGRES_PASSWORD=password # Пароль от базы данных (Настройка)
-DB_PASSWORD=password # Пароль от базы данных (Использование)
-TEST_POSTGRES_PASSWORD=password # Пароль от тестовой базы данный (Настройка)
-TEST_DB_PASSWORD=password # Пароль от тестовой базы данных (Использование)
+values = dict(
+    id=1,
+    name='Stripe',
+    price=50000,
+)
+stripe = CreateStripeItem(values)
+await stripe.action()
 ```
-## Docker
-Шаблон находится под системой управления и контеризации - **Docker**.
-Если у вас нет Docker - вы можете установить его с официального сайта: [Docker](https://www.docker.com/get-started/)
-- Вам необходимо сделать "Билд"
-```bash
-docker compose build
-```
-- Вам необходимо запустить окружение
-```bash
-docker compose up
-```
-- После успешного запуска приложение будет доступно по адрессу: http://localhost:8080
-- Grafana: http://localhost:3000
-- Flower: http://localhost:5555
 
-# View
-Обзор и детали данного шаблона
-## Найболее используемые
-Найболее используемые конструкции с которыми приходится часто взаимодействовать.
-### Registration Routers
-- В каждом приложений необходимо инициализировать router
+Обновление Stripe объекта
 ```python
-# api/users/views.py
-from fastapi import APIRouter
-
-
-router = APIRouter(
-    prefix='/users',
-    tags=['Users'],
-    )
+values = dict(
+    id=1,
+    name='Updated_Stripe',
+)
+stripe = UpdateStripeItem(values)
+await stripe.action()
 ```
-- Затем зарегистрировать роутер
+
+Деактивация Stripe объекта
 ```python
-# api_v1/routers.py
-from api_v1.users.views import router as users
-from config import settings
-
-
-# В этой функции нужно по порядку регистрировать routers
-def register_routers(app: FastAPI) -> None:
-    app.include_router(
-        router=users,
-        prefix=settings.API_PREFIX,
-    )
+values = dict(
+    id=1,
+)
+stripe = DeactivateStripeItem(values)
+await stripe.action()
 ```
-После регистрации данные маршруты будут доступны.
 
-### Registration Logs
-- Логи захватывают все исключения возникшие в системе
-и с помошью диспечиризации распределяется по нужным **file.log**
+Активация Stripe объекта
 ```python
-# app_includes/logs_errors.py
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-
-from api_v1.exeptions import ValidationError
-
-
-# В данной функции регистрируются все исключения для захватывания Логами
-def register_errors(app: FastAPI) -> None:
-    @app.exception_handler(ValidationError)
-    async def validation_error_handler(
-        request: Request,
-        exc: ValidationError,
-    ):
-        logger.opt(exception=True).warning(exc)
-        response = dict(
-            status=False,
-            error_code=exc.status_code,
-            message=exc.detail,
-        )
-        return JSONResponse(response)
+values = dict(
+    id=1,
+)
+stripe = ActivateStipeItem(values)
+await stripe.action()
 ```
-- Если вы пишете пользовательское исключение например:
+
+Список Stripe объектов
 ```python
-from starlette.exceptions import HTTPException
-
-
-class ValidationError(HTTPException):
-
-pass
+list_items = [
+    <Product1>,
+    <Product2>,
+    <Product3>,
+    ]
+stripe = StripeItems(
+    products=list_items,
+    add_key=True,
+)
+# add_key необходим в случае ручного использования,
+# для того что бы система автоматически добавила API_KEY
+# к запросу Stripe
 ```
-То вам нужно его зарегистрировать как было показанно выше,
-иначе logs не смогут выявить данное исключение и данные будут утеряны.
 
-### Registration Middlaware
-- Для регистрации Middlaware вам нужно добавить его в функцию
+Создание скидочного купона
 ```python
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
-
-from config import settings
-
-
-# Данная функция регистрирует все middleware
-def register_middlewares(app: FastAPI) -> None:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=[
-            settings.CURRENT_ORIGIN,
-        ],
-        allow_credentials=True,
-        allow_methods=['*'],
-        allow_headers=['*'],
-    )
+values = dict(
+    id=1,
+    number='COUPON',
+    discount=22.0,
+    end_at=8043214523, # UNIX-time required
+)
+stripe = CreateDiscountCoupon(values)
+await stripe.action()
 ```
-- При появлении новых middleware добавляйте их по порядку в эту функцию
 
-### Celery
-- Для регистрации task вам нужно создать файл с именем **tasks.py** в вашем приложении:
+Обновление скидочного купона
 ```python
-# api_v1/users/tasks.py
-from config import celery_app
-import asyncio
-
-
-@celery_app.task
-async def time_sleep_task():
-    """
-    Тестовая задача для Celery
-    """
-    await asyncio.sleep(2.0)
-    return 'Task is done'
+values = dict(
+    id=1,
+    number='NEWCOUPON',
+)
+stripe = UpdateDiscountCoupon(values)
+await stripe.action()
 ```
-- Затем добавить этот файл в список пакетов Celery
+
+Удаление скидочного купона
 ```python
-# confin.celery.connection.py
+values = dict(
+    id=1,
+)
+stripe = DeleteDiscountCoupon(values)
+await stripe.action()
+```
+
+Создание Сессии для платежа
+```python
+user = <User1>
+list_items = [
+    <Product1>,
+    <Product2>,
+    <Product3>,
+    ]
+unique_code = int_to_base36(getrandbits(41))
+promo = 1
+session = StripeSession(
+    user=user,
+    products=list_items,
+    unique_code=unique_code,
+    promo=promo,
+)
+session.get_session_payments()
+# unique_code неоходим для защиты сессии от злоумышленного
+# использования. Этот код идентифицирует текущую корзину.
+# При совершении покупки и создании заказа этот код удаляется из текущей корзины,
+# по этому создать дополнительные заказы просто посредством перехода на ту же ссылку
+# не возможно.
+```
+
+Отмена Stripe Сессии
+```python
+basket = <Basket1>
+ExpireSession(
+    session_id=basket.session_id,
+).expire_session()
+```
+
+## RabbitMQ, Celery
+Используется Брокер сообщений RabbitMQ и Worker Celery
+### Docker RabbitMQ
+```yaml
+rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:4.0.3-management
+    env_file:
+      - .env
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+volumes:
+  rabbitmq-data:
+```
+
+### Настройка RabbitMQ
+```python
+# .env
+RABBITMQ_DEFAULT_USER=guest # Логин RabbitMQ
+RABBITMQ_DEFAULT_PASS=guest # Пароль RabbitMQ
+```
+
+### Docker Celery Worker
+```yaml
+celery_worker:
+    build: 
+      context: .
+      dockerfile: ./docker/fastapi/Dockerfile
+    command: /start-celeryworker
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+```
+
+### Настройка Celery
+```python
+# congin/rabbitmq/connection.py
+from config.config import settings
+
 
 app = Celery(__name__)
 app.conf.broker_url = settings.rabbit.broker_url
-# Регистрация до окружения где находится tasks.py
-app.autodiscover_tasks(packages=['api_v1.users'])
+app.autodiscover_tasks(packages=['project.packages'])
 ```
-- После этих действий ваша task будет зарегистрирована
 
-### Test
-- Для тестирования у вас есть тестовая база данных, а так же
-уже инициализированный отдельный клиент.
-Cпособ реализации в **api_v1/tests/conftest.py**
-- Что бы написать тестовую функцию которой нужен доступ к API,
-вам нужно использовать fixture - client.
-> [!NOTE]
-> Для асинхронных тестов используйте **@pytest.mark.asyncio**
+### Класс Celery
+Есть реализация Асихронного класса Celery
+для выполнения задач в асинхронном режиме.
+
+### Использование
+После настройки RabbitMQ и Celery
+Вам необходимо запустить проект (инструкции ниже)
+а затем перейти по адрессу:
+http://localhost:15672/
+Это будет страница RabbitMQ для просмотра всех каналов, очередей,
+обмеников, пользователей, и.т.д.
+Вам нужно будет ввести логин и пароль для аутентификации который вы указали в .env
+
+## Flower
+Flower это мощное приложение для отслеживания всех
+задач на стороне Worker.
+### Docker Flower
+```yaml
+dashboard:
+    build: 
+      context: .
+      dockerfile: ./docker/fastapi/Dockerfile
+    command: /start-flower
+    volumes:
+      - .:/app
+    ports:
+      - 5555:5555
+    env_file:
+      - .env
+```
+
+### Настройка
+Предварительная настройка не требуется, все настройки подтягиваются
+автоматически из RabbitMQ.
+
+### Использование
+Для использования Flower вам нужно перейти по адрессу:
+http://localhost:5555/
+У вас откроется страница Flower с полной информацией о Worker и Tasks.
+
+# Dependencies
+В проекте используются зависимости:
+- fastapi
+- pydantic
+- pydantic-settings
+- sqlalchemy
+- asyncpg
+- psycopg2-binary
+- alembic
+- pyjwt
+- bcrypt
+- python-multipart
+- stripe
+- pytz
+- uvicorn
+- python-dotenv
+- celery
+- flower
+
+## SQLAlchemy
+SQLAlchemy используется асинхронный.
+Реализованн специальный класс для поддежки подключения и 
+делегированнием сессий.
+- DataBaseHelper
 
 ```python
-# api_v1.tests.test_users.py
-import pytest
+# Инициализация соединения с Базой Данных на текущий HTTP запрос
+async with db_helper.engine.begin() as conn:
+    await conn.run_sync(Base.metadata.create_all)
+    yield # Событие HTTP запроса
+await db_helper.dispose()
 
-
-@pytest.mark.asyncio
-async def test_get_user_error(client: AsyncClient):
-    response = await client.get(
-        '/users/get',
-    )
-    assert response.status_code == 400
+# "Протаскивание" текущей сессии для запросов к Базе данных на этот HTTP запрос
+async def get_session(session: AsyncSession = Depends(db_helper.session_geter)):
+    current_session = session
+    return session
 ```
-- Для запуска используйте команду
+
+# Install
+## ENV
+Для запуска проекта вам нужно установить переменные окружения
+```python
+# .env
+POSTGRES_PASSWORD=password # Пароль базы данных (настройка)
+DB_PASSWORD=password # Пароль базы даных (использование)
+RABBITMQ_DEFAULT_USER=user # Логин для RabbitMQ
+RABBITMQ_DEFAULT_PASS=password # Пароль для RabbitMQ
+STRIPE_API=some_stripe:api # API_KEY stripe платежная система
+```
+Для получения API_KEY Stripe вам нужно перейти на официальную страницу Stripe [link](https://stripe.com)
+и зарегистрироваться, в последствии вы получите ключи для API.
+
+## Certifications
+- Перейдите в папку сертификатов
 ```bash
-pytest
+cd certs
 ```
+
+- Создание приватного ключа
+```bash
+openssl genrsa -out jwt-private.pem 2048
+```
+
+- Создание публичного ключа на основе приватного
+```bash
+openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt-public.pem
+```
+
+## Docker
+Проект находится под системой контеризации Docker
+Если у вас нет Docker, прейдите на официальную страницу Docker [link](https://www.docker.com)
+и скачайте от туда Docker (в случае если у вас система MAC, Windows, в ином установка посредством терминала).
+
+Неоходимо совершить билд образов и контейнеров
+```bash
+docker compose build
+```
+Затем запустить образы
+```bash
+docker compose up
+```
+
+# OpenAI
+FastAPI поддерживает автоматическую генерацию документации и взаимодействие с API.
+Для более легкого просмотра возможностей проекта (пока нет клиента) вы можете прейти по ссылке:
+http://localhost:8080/docs/
