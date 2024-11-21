@@ -43,7 +43,10 @@ async def app() -> AsyncGenerator[LifespanManager, Any]:
             yield
             await conn.run_sync(BaseModel.metadata.drop_all)
 
-    app = FastAPI(docs_url=None, redoc_url=None)
+    app = FastAPI(docs_url=None,
+                  redoc_url=None,
+                  lifespan=lifespan,
+                  )
     register_routers(app=app)
     app.dependency_overrides[db_connection.session_geter] = override_get_async_session
 
