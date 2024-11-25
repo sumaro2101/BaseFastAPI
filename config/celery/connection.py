@@ -41,4 +41,5 @@ class Celery(celery.Celery):
 
 app = Celery(__name__)
 app.conf.broker_url = settings.rabbit.broker_url
+app.conf.timezone = settings.celery.TIMEZONE
 app.autodiscover_tasks(packages=['api_v1.users'])
