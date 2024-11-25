@@ -9,6 +9,8 @@ from contextlib import asynccontextmanager
 from asgi_lifespan import LifespanManager
 from fastapi import FastAPI
 from sqlalchemy.pool import NullPool
+from alembic.config import Config
+from alembic import command
 
 from config import test_connection, settings, BaseModel
 from config import db_connection
@@ -19,6 +21,12 @@ db_setup = test_connection(
     settings.test_db.url,
     poolclass=NullPool,
 )
+
+
+cfg = Config(settings.alembic.CONFIG_PATH.as_posix())
+cfg.set_main_option('script_location',
+                    settings.alembic.MIGRATION_PATH.as_posix(),
+                    )
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -39,7 +47,7 @@ async def app() -> AsyncGenerator[LifespanManager, Any]:
     async def lifespan(app: FastAPI):
         async with db_setup.engine.begin() as conn:
             await conn.run_sync(BaseModel.metadata.create_all)
-            sys.stdout.write('alembic upgrade head')
+            await conn.run_sync(alembic_do_upgrade)
             yield
             await conn.run_sync(BaseModel.metadata.drop_all)
 
@@ -63,3 +71,11 @@ async def client(app: FastAPI) -> AsyncGenerator[httpx.AsyncClient, Any]:
         base_url=current_home + current_api,
     ) as client:
         yield client
+
+
+def alembic_do_upgrade(connection):
+    """
+    Upgrade миграция алембик
+    """
+    cfg.attributes['connection'] = connection
+    command.upgrade(cfg, 'head')
