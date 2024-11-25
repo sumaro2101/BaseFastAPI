@@ -22,7 +22,11 @@ db_setup = test_connection(
 )
 
 
-cfg = Config(settings.alembic.CONFIG_PATH.as_posix())
+cfg = Config()
+cfg.set_main_option(
+    'sqlalchemy.url',
+    settings.test_db.url,
+)
 cfg.set_main_option('script_location',
                     settings.alembic.MIGRATION_PATH.as_posix(),
                     )
