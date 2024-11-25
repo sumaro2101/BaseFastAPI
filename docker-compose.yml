@@ -42,6 +42,20 @@ services:
       - db
       - fast_api
 
+  celery_beat:
+    build: 
+      context: .
+      dockerfile: ./docker/fastapi/Dockerfile
+    command: /start-celerybeat
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - db
+      - fast_api
+
   dashboard:
     build: 
       context: .
