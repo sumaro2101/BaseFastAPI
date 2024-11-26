@@ -1,7 +1,8 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from starlette.config import Config
+from celery.schedules import crontab
 
 
 base_dir = Path(__file__).resolve().parent.parent
@@ -9,6 +10,14 @@ log_dir = base_dir.joinpath('logs')
 
 
 config = Config('.env')
+
+
+class AlembicSettings(BaseModel):
+    """
+    Настройки Alembic
+    """
+    CONFIG_PATH: Path = Path('alembic.ini')
+    MIGRATION_PATH: Path = Path('async_alembic/')
 
 
 class TestDBSettings(BaseModel):
@@ -33,6 +42,23 @@ class DBSettings(BaseModel):
     _name: str = config('DB_HOST')
     _db_name: str = config('DB_NAME')
     url: str = f'{_engine}://{_owner}:{_password}@{_name}/{_db_name}'
+
+
+class CelerySettings(BaseModel):
+    """
+    Настройки Celery
+    """
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+    )
+    TIMEZONE: str = 'Europe/Moscow'
+    TIMEDELTA_PER_DAY: crontab = crontab(minute=0,
+                                         hour=2,
+                                         day_of_week='*/1',
+                                         day_of_month='*/1',
+                                         month_of_year='*/1',
+                                         )
+    TEST_TIMEDELTA: crontab = crontab(minute='*/1')
 
 
 class RabbitSettings(BaseModel):
@@ -62,7 +88,9 @@ class Settings(BaseSettings):
     )
     db: DBSettings = DBSettings()
     test_db: TestDBSettings = TestDBSettings()
+    celery: CelerySettings = CelerySettings()
     rabbit: RabbitSettings = RabbitSettings()
+    alembic: AlembicSettings = AlembicSettings()
     debug: bool = bool(int(config('DEBUG')))
     API_PREFIX: str = '/api/v1'
     BASE_DIR: Path = base_dir

@@ -1,4 +1,3 @@
-import sys
 import asyncio
 import httpx
 import pytest_asyncio
@@ -39,7 +38,6 @@ async def app() -> AsyncGenerator[LifespanManager, Any]:
     async def lifespan(app: FastAPI):
         async with db_setup.engine.begin() as conn:
             await conn.run_sync(BaseModel.metadata.create_all)
-            sys.stdout.write('alembic upgrade head')
             yield
             await conn.run_sync(BaseModel.metadata.drop_all)
 
@@ -63,3 +61,9 @@ async def client(app: FastAPI) -> AsyncGenerator[httpx.AsyncClient, Any]:
         base_url=current_home + current_api,
     ) as client:
         yield client
+
+
+@pytest_asyncio.fixture()
+async def get_async_session():
+    async with db_setup.session() as session:
+        yield session
