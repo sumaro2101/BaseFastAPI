@@ -8,8 +8,6 @@ from contextlib import asynccontextmanager
 from asgi_lifespan import LifespanManager
 from fastapi import FastAPI
 from sqlalchemy.pool import NullPool
-from alembic.config import Config
-from alembic import command
 
 from config import test_connection, settings, BaseModel
 from config import db_connection
@@ -20,16 +18,6 @@ db_setup = test_connection(
     settings.test_db.url,
     poolclass=NullPool,
 )
-
-
-cfg = Config()
-cfg.set_main_option(
-    'sqlalchemy.url',
-    settings.test_db.url,
-)
-cfg.set_main_option('script_location',
-                    settings.alembic.MIGRATION_PATH.as_posix(),
-                    )
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -50,7 +38,6 @@ async def app() -> AsyncGenerator[LifespanManager, Any]:
     async def lifespan(app: FastAPI):
         async with db_setup.engine.begin() as conn:
             await conn.run_sync(BaseModel.metadata.create_all)
-            await conn.run_sync(alembic_do_upgrade)
             yield
             await conn.run_sync(BaseModel.metadata.drop_all)
 
@@ -76,9 +63,7 @@ async def client(app: FastAPI) -> AsyncGenerator[httpx.AsyncClient, Any]:
         yield client
 
 
-def alembic_do_upgrade(connection):
-    """
-    Upgrade миграция алембик
-    """
-    cfg.attributes['connection'] = connection
-    command.upgrade(cfg, 'head')
+@pytest_asyncio.fixture()
+async def get_async_session():
+    async with db_setup.session() as session:
+        yield session
