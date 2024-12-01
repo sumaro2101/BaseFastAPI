@@ -13,8 +13,7 @@ async def time_sleep_task():
 
 celery_app.conf.beat_schedule = {
     'test-every-10-seconds': {
-        'task': 'llm_analizer.tasks.test',
+        'task': 'api_v1.users.tasks.time_sleep_task',
         'schedule': settings.celery.TEST_TIMEDELTA,
-        'args': ('hello',)
     },
 }
