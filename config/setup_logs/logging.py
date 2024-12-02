@@ -1,3 +1,7 @@
+r"""
+Основной файл настройки логирования проектов
+"""
+
 import sys
 from loguru import logger
 
