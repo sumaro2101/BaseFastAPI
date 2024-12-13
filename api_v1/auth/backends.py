@@ -7,7 +7,9 @@ from fastapi_users.authentication import (
 from config import settings
 
 
-bearer_transport = BearerTransport()
+bearer_transport = BearerTransport(settings.API_PREFIX +
+                                   settings.JWT.JWT_PATH +
+                                   '/login')
 
 
 def get_jwt_strategy() -> JWTStrategy:

@@ -19,6 +19,7 @@ class JWTSettings(BaseModel):
     NAME: str = 'jwt'
     SECRET: str = config('SECRET')
     RESET_LIFESPAN_TOKEN_SECONDS: int = 3600
+    JWT_PATH: str = '/auth/jwt'
 
 
 class AlembicSettings(BaseModel):
