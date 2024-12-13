@@ -97,6 +97,7 @@ class Settings(BaseSettings):
     LOG_DIR: Path = log_dir
     CURRENT_ORIGIN: str = config('CURRENT_ORIGIN')
     SECRET: str = config('SECRET')
+    RESET_LIFESPAN_TOKEN_SECONDS: int = 3600
 
 
 settings = Settings()

@@ -1,8 +1,4 @@
-from fastapi import APIRouter, Depends, status, Request
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from config import db_connection
-from api_v1.exeptions import ValidationError
+from fastapi import APIRouter, Request
 
 
 router = APIRouter(prefix='/users',
