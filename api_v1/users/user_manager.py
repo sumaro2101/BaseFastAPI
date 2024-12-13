@@ -13,5 +13,5 @@ class UserManager(AuthenticationUserManagerMixin,
     UserManager для работы с пользователем
     """
 
-    verification_token_secret = settings.SECRET
-    reset_password_token_lifetime_seconds = settings.RESET_LIFESPAN_TOKEN_SECONDS
+    verification_token_secret = settings.JWT.SECRET
+    reset_password_token_lifetime_seconds = settings.JWT.RESET_LIFESPAN_TOKEN_SECONDS

@@ -12,6 +12,15 @@ log_dir = base_dir.joinpath('logs')
 config = Config('.env')
 
 
+class JWTSettings(BaseModel):
+    """
+    Настройки JWT токена
+    """
+    NAME: str = 'jwt'
+    SECRET: str = config('SECRET')
+    RESET_LIFESPAN_TOKEN_SECONDS: int = 3600
+
+
 class AlembicSettings(BaseModel):
     """
     Настройки Alembic
@@ -91,13 +100,12 @@ class Settings(BaseSettings):
     celery: CelerySettings = CelerySettings()
     rabbit: RabbitSettings = RabbitSettings()
     alembic: AlembicSettings = AlembicSettings()
+    JWT: JWTSettings = JWTSettings()
     debug: bool = bool(int(config('DEBUG')))
     API_PREFIX: str = '/api/v1'
     BASE_DIR: Path = base_dir
     LOG_DIR: Path = log_dir
     CURRENT_ORIGIN: str = config('CURRENT_ORIGIN')
-    SECRET: str = config('SECRET')
-    RESET_LIFESPAN_TOKEN_SECONDS: int = 3600
 
 
 settings = Settings()
