@@ -96,6 +96,7 @@ class Settings(BaseSettings):
     BASE_DIR: Path = base_dir
     LOG_DIR: Path = log_dir
     CURRENT_ORIGIN: str = config('CURRENT_ORIGIN')
+    SECRET: str = config('SECRET')
 
 
 settings = Settings()

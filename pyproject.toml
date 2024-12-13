@@ -19,6 +19,7 @@ loguru = "^0.7.2"
 alembic = "^1.14.0"
 pytest = "^8.3.3"
 prometheus-fastapi-instrumentator = "^7.0.0"
+fastapi-users = {extras = ["sqlalchemy"], version = "^14.0.0"}
 
 
 [tool.poetry.group.dev.dependencies]
