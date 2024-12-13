@@ -14,23 +14,28 @@ fastapi_users = FastAPIUsers[User, int](
 )
 
 
-router = APIRouter(tags=['Auth'],
-                   )
+router = APIRouter()
 router.include_router(fastapi_users.get_auth_router(auth_backend),
+                      tags=['Auth'],
                       prefix=settings.JWT.JWT_PATH,
                       )
 router.include_router(fastapi_users.get_register_router(UserRead, UserCreate),
+                      tags=['Auth'],
                       prefix='/auth',
                       )
 router.include_router(fastapi_users.get_verify_router(UserRead),
+                      tags=['Auth'],
                       prefix='/auth',
                       )
 router.include_router(fastapi_users.get_reset_password_router(),
+                      tags=['Auth'],
                       prefix='/auth',
                       )
 router.include_router(fastapi_users.get_reset_password_router(),
+                      tags=['Auth'],
                       prefix='/auth',
                       )
 router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate),
-                      prefix='/auth',
+                      tags=['Users'],
+                      prefix='/users',
                       )
