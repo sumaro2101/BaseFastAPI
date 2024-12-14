@@ -4,7 +4,7 @@ from fastapi_users import FastAPIUsers
 from config.models import User
 from config import settings
 from .backends import auth_backend
-from .schemas import UserRead, UserCreate, UserUpdate
+from .schemas import UserRead, UserCreate
 from api_v1.users.user_manager import get_user_manager
 
 
@@ -30,12 +30,4 @@ router.include_router(fastapi_users.get_verify_router(UserRead),
 router.include_router(fastapi_users.get_reset_password_router(),
                       tags=['Auth'],
                       prefix='/auth',
-                      )
-router.include_router(fastapi_users.get_reset_password_router(),
-                      tags=['Auth'],
-                      prefix='/auth',
-                      )
-router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate),
-                      tags=['Users'],
-                      prefix='/users',
                       )

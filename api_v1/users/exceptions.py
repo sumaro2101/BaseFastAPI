@@ -11,7 +11,7 @@ class PasswordNotValidError(FastAPIUsersException):
 
 class UserNotVerified(FastAPIUsersException):
     """
-    Исключение не вурифицинованного пользователя
+    Исключение не верифицинованного пользователя
     """
 
     pass

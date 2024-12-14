@@ -2,7 +2,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 from config import settings
-from api_v1.users.middlewares import AuthenticationMiddleware
 
 
 def register_middlewares(app: FastAPI) -> None:
@@ -50,7 +49,4 @@ def register_middlewares(app: FastAPI) -> None:
         allow_credentials=True,
         allow_methods=['*'],
         allow_headers=['*'],
-    )
-    app.add_middleware(
-        AuthenticationMiddleware,
     )
