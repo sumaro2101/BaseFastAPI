@@ -89,6 +89,18 @@ class RabbitSettings(BaseModel):
                        RMQ_PORT)
 
 
+class RedisSettings(BaseModel):
+    """
+    Настройки Redis
+    """
+    REDIS_HOST: str = config('REDIS_HOST')
+    REDIS_PORT: str = config('REDIS_PORT')
+    redis_url: str = ('redis://' +
+                      REDIS_HOST +
+                      '/' +
+                      REDIS_PORT)
+
+
 class Settings(BaseSettings):
     """
     Настройки проекта
@@ -100,6 +112,7 @@ class Settings(BaseSettings):
     test_db: TestDBSettings = TestDBSettings()
     celery: CelerySettings = CelerySettings()
     rabbit: RabbitSettings = RabbitSettings()
+    redis: RedisSettings = RedisSettings()
     alembic: AlembicSettings = AlembicSettings()
     JWT: JWTSettings = JWTSettings()
     debug: bool = bool(int(config('DEBUG')))

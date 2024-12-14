@@ -15,6 +15,11 @@ class UserManager(ActionUserManagerMixin,
                   BaseUserManager[User, int]):
     """
     UserManager для работы с пользователем
+
+    Вмещает в себя все неоходимые методы для CRUD пользователя
+
+    Требует при инициализации :class:`BaseUserDatabase` экземпляр
+    с активной текущей сессией
     """
 
     verification_token_secret = settings.JWT.SECRET
@@ -27,6 +32,10 @@ class UserManager(ActionUserManagerMixin,
 async def get_user_manager(session: AsyncSession = Depends(
     db_connection.session_geter,
 )) -> UserManager:
+    """
+    Получение Инициализированного с сессией
+    UserManager
+    """
     return UserManager(user_db=SQLAlchemyUserDatabase(
         session=session,
         user_table=User,

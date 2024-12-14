@@ -1,7 +1,8 @@
 from fastapi_users.exceptions import FastAPIUsersException
+from starlette.exceptions import HTTPException
 
 
-class PasswordNotValidError(FastAPIUsersException):
+class PasswordNotValidError(HTTPException):
     """
     Исключение не валидного пароля
     """

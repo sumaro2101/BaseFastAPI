@@ -14,6 +14,7 @@ services:
     depends_on:
       - db
       - rabbitmq
+      - redis
 
   rabbitmq:
     hostname: rabbitmq
@@ -81,6 +82,12 @@ services:
     hostname: db
     env_file:
       - .env
+
+  redis:
+    restart: always
+    image: redis:7.2.5-alpine
+    expose:
+      - 6379
 
   test_db:
     restart: always
