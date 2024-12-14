@@ -96,9 +96,7 @@ class RedisSettings(BaseModel):
     REDIS_HOST: str = config('REDIS_HOST')
     REDIS_PORT: str = config('REDIS_PORT')
     redis_url: str = ('redis://' +
-                      REDIS_HOST +
-                      '/' +
-                      REDIS_PORT)
+                      REDIS_HOST)
 
 
 class Settings(BaseSettings):
