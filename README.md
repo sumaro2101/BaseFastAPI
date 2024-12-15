@@ -186,6 +186,78 @@ def get_jwt_strategy() -> JWTStrategy:
         )
 ```
 
+### Backend
+
+auth_backend собирает `Transport` и `Strategy` воединно в `AuthenticationBackend`
+Этот класс необхим будет для:
+
+- `Authenticator`
+- `FastAPIUsers`
+
+```python
+from fastapi_users.authentication import AuthenticationBackend
+
+from config import settings
+
+
+auth_backend = AuthenticationBackend(
+    name=settings.JWT.NAME,
+    transport=bearer_transport,
+    get_strategy=get_jwt_strategy,
+)
+```
+
+### Authenticator
+
+Authenticator необходим для `Callback[Depenpency]` пользователей,
+применяется для вытаскивания текущего пользователя.
+
+```python
+from fastapi import Depends
+from fastapi_users.authentication import Authenticator
+
+from config.models import User
+
+
+authenticator = Authenticator(
+    (auth_backend,),
+    get_user_manager,
+)
+
+active_user = authenticator.current_user(
+    active=True,
+    verified=True,
+)
+
+async def get_user(user: User = Depends(active_user)) -> User:
+    return user
+```
+
+### FastAPIUsers
+
+FastAPIUsers применяется в итоговом выводе End-points в API
+
+```python
+from fastapi_users import FastAPIUsers
+
+from api_v1.auth.schemas import UserRead, UserUpdate
+
+
+fastapi_users = FastAPIUsers[User, int](
+    get_user_manager,
+    (auth_backend,)
+)
+
+router = APIRouter()
+
+router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate),
+                      tags=['Users'],
+                      prefix='/users',
+                      )
+```
+
+По итогу будет добавлены новые End-points в API
+
 ## Найболее используемые
 
 Найболее используемые конструкции с которыми приходится часто взаимодействовать.
