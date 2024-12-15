@@ -97,7 +97,7 @@ docker compose up
 ## Users
 
 В данном шаблоне реализован CRUD для пользователя с помощью библиотеки
-fastapi-users
+[fastapi-users]<https://fastapi-users.github.io/fastapi-users/latest/>
 
 ### End-points
 
@@ -141,6 +141,50 @@ fastapi-users
 Должен осуществлять логику отправки токена по эмеилу либо другим способом.
 В данный момент отправка осуществляется через `консоль`.
 Для деталей смотрите миксин `api_v1/users/mixins/ActionUserManagerMixin`
+
+### Transport
+
+В fastapi-users есть 2 вида транспорта:
+
+- [Bearer]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/transports/bearer/>
+- [Cookie]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/transports/cookie/>
+
+В шаблоне реализован Bearer способ:
+
+```python
+from fastapi_users.authentication import BearerTransport
+
+from config import settings
+
+
+bearer_transport = BearerTransport(settings.CURRENT_ORIGIN +
+                                   settings.API_PREFIX +
+                                   settings.JWT.JWT_PATH +
+                                   '/login')
+```
+
+### Strategy
+
+В fastapi-users есть 3 вида стратегии:
+
+- [Database]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/database/>
+- [JWT]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/jwt/>
+- [Redis]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/redis/>
+
+В Шаблоне реализован JWT способ:
+
+```python
+from fastapi_users.authentication import JWTStrategy
+
+from config import settings
+
+
+def get_jwt_strategy() -> JWTStrategy:
+    return JWTStrategy(
+        secret=settings.JWT.SECRET,
+        lifetime_seconds=settings.JWT.RESET_LIFESPAN_TOKEN_SECONDS,
+        )
+```
 
 ## Найболее используемые
 
