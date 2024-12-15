@@ -142,6 +142,12 @@ docker compose up
 В данный момент отправка осуществляется через `консоль`.
 Для деталей смотрите миксин `api_v1/users/mixins/ActionUserManagerMixin`
 
+### UserManager
+
+UserManager Это специальная обвертка для `SQLAlchemyUserDatabase` который в свою
+очередь вмещает в себя класс модели `User` и сессию `AsyncSession`
+Смотрите класс `api_v1/users/user_manager/UserManager`
+
 ### Transport
 
 В fastapi-users есть 2 вида транспорта:
@@ -189,7 +195,7 @@ def get_jwt_strategy() -> JWTStrategy:
 ### Backend
 
 auth_backend собирает `Transport` и `Strategy` воединно в `AuthenticationBackend`
-Этот класс необхим будет для:
+Этот класс необходим будет для:
 
 - `Authenticator`
 - `FastAPIUsers`
@@ -238,6 +244,7 @@ async def get_user(user: User = Depends(active_user)) -> User:
 FastAPIUsers применяется в итоговом выводе End-points в API
 
 ```python
+from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
 
 from api_v1.auth.schemas import UserRead, UserUpdate
@@ -257,6 +264,26 @@ router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate),
 ```
 
 По итогу будет добавлены новые End-points в API
+
+### Permissions
+
+С помощью Authenticator возможно осуществлять права доступа к End-points
+`api_v1/auth/permissions.py` содержит несколько `Callback` функции для permissions
+По желанию вы можете подолнять их.
+
+```python
+from fastapi import APIRouter
+
+from api_v1.auth import active_user
+
+
+router = APIRouter()
+
+
+@router.get(path='/get-user')
+async def get_user(user: User = Depends(active_user)) -> User:
+    return user
+```
 
 ## Найболее используемые
 
@@ -363,6 +390,23 @@ def register_middlewares(app: FastAPI) -> None:
 ```
 
 - При появлении новых middleware добавляйте их по порядку в эту функцию
+
+### DAO
+
+DAO необходим для CRUD manager любой модели.
+`config.dao.base_dao.BaseDAO`
+
+Для опеределения DAO вашей модели нужно наследовать `BaseDAO`, а Затем
+переопределить поле класса `model`
+
+```python
+from config.dao import BaseDAO
+from config.models import Product
+
+
+class ProductDAO(BaseDAO):
+    model = Product
+```
 
 ### Celery
 
