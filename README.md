@@ -97,7 +97,7 @@ docker compose up
 ## Users
 
 В данном шаблоне реализован CRUD для пользователя с помощью библиотеки
-[fastapi-users]<https://fastapi-users.github.io/fastapi-users/latest/>
+[fastapi-users](https://fastapi-users.github.io/fastapi-users/latest/)
 
 ### End-points
 
@@ -146,8 +146,8 @@ docker compose up
 
 В fastapi-users есть 2 вида транспорта:
 
-- [Bearer]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/transports/bearer/>
-- [Cookie]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/transports/cookie/>
+- [Bearer](https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/transports/bearer/)
+- [Cookie](https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/transports/cookie/)
 
 В шаблоне реализован Bearer способ:
 
@@ -167,9 +167,9 @@ bearer_transport = BearerTransport(settings.CURRENT_ORIGIN +
 
 В fastapi-users есть 3 вида стратегии:
 
-- [Database]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/database/>
-- [JWT]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/jwt/>
-- [Redis]<https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/redis/>
+- [Database](https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/database/)
+- [JWT](https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/jwt/)
+- [Redis](https://fastapi-users.github.io/fastapi-users/latest/configuration/authentication/strategies/redis/)
 
 В Шаблоне реализован JWT способ:
 
