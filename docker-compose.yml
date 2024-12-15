@@ -14,6 +14,7 @@ services:
     depends_on:
       - db
       - rabbitmq
+      - redis
 
   rabbitmq:
     hostname: rabbitmq
@@ -29,7 +30,7 @@ services:
       - db
 
   celery_worker:
-    build: 
+    build:
       context: .
       dockerfile: ./docker/fastapi/Dockerfile
     command: /start-celeryworker
@@ -43,7 +44,7 @@ services:
       - fast_api
 
   celery_beat:
-    build: 
+    build:
       context: .
       dockerfile: ./docker/fastapi/Dockerfile
     command: /start-celerybeat
@@ -57,7 +58,7 @@ services:
       - fast_api
 
   dashboard:
-    build: 
+    build:
       context: .
       dockerfile: ./docker/fastapi/Dockerfile
     command: /start-flower
@@ -81,6 +82,12 @@ services:
     hostname: db
     env_file:
       - .env
+
+  redis:
+    restart: always
+    image: redis:7.2.5-alpine
+    expose:
+      - 6379
 
   test_db:
     restart: always

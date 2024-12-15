@@ -41,6 +41,7 @@ class Celery(celery.Celery):
 
 app = Celery(__name__)
 app.conf.broker_url = settings.rabbit.broker_url
+app.conf.result_backend = settings.redis.redis_url
 app.conf.timezone = settings.celery.TIMEZONE
 app.conf.broker_connection_retry_on_startup = True
 app.autodiscover_tasks(packages=['api_v1.users'])

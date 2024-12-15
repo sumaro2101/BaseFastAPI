@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from config import settings
 from api_v1.users.views import router as users
+from api_v1.auth.views import router as auth
 
 
 def register_routers(app: FastAPI) -> None:
@@ -13,7 +14,7 @@ def register_routers(app: FastAPI) -> None:
 
     ## Returns:
         None
-    
+
     ## Example
     ```python
     from fastapi import FastAPI
@@ -37,5 +38,10 @@ def register_routers(app: FastAPI) -> None:
     """
     app.include_router(
         router=users,
+        prefix=settings.API_PREFIX,
+        )
+
+    app.include_router(
+        router=auth,
         prefix=settings.API_PREFIX,
         )

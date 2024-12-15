@@ -1,22 +1,31 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
+from fastapi_users import FastAPIUsers
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from config import db_connection
-from api_v1.exeptions import ValidationError
-
-
-router = APIRouter(prefix='/users',
-                   tags=['Users'],
-                   )
+from config.models import User
+from api_v1.auth.backends import auth_backend
+from api_v1.auth import active_user
+from api_v1.auth.schemas import UserRead, UserUpdate
+from api_v1.users.user_manager import get_user_manager
 
 
-@router.get(path='/get',
-            description='Test end point',
+fastapi_users = FastAPIUsers[User, int](
+    get_user_manager,
+    (auth_backend,)
+)
+
+
+router = APIRouter()
+
+
+@router.get(path='/test',
+            response_model=UserRead,
+            dependencies=[Depends(active_user)],
             )
-async def get_user(
-    session: AsyncSession = Depends(db_connection.session_geter),
-):
-    session = session
-    raise ValidationError(status_code=status.HTTP_400_BAD_REQUEST,
-                          detail=dict(some='Some is wrong'))
+async def test_end_point(user: User = Depends(active_user)):
+    return user
+
+
+router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate),
+                      tags=['Users'],
+                      prefix='/users',
+                      )

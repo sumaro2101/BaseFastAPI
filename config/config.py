@@ -12,6 +12,16 @@ log_dir = base_dir.joinpath('logs')
 config = Config('.env')
 
 
+class JWTSettings(BaseModel):
+    """
+    Настройки JWT токена
+    """
+    NAME: str = 'jwt'
+    SECRET: str = config('SECRET')
+    RESET_LIFESPAN_TOKEN_SECONDS: int = 3600
+    JWT_PATH: str = '/auth/jwt'
+
+
 class AlembicSettings(BaseModel):
     """
     Настройки Alembic
@@ -79,6 +89,16 @@ class RabbitSettings(BaseModel):
                        RMQ_PORT)
 
 
+class RedisSettings(BaseModel):
+    """
+    Настройки Redis
+    """
+    REDIS_HOST: str = config('REDIS_HOST')
+    REDIS_PORT: str = config('REDIS_PORT')
+    redis_url: str = ('redis://' +
+                      REDIS_HOST)
+
+
 class Settings(BaseSettings):
     """
     Настройки проекта
@@ -90,7 +110,9 @@ class Settings(BaseSettings):
     test_db: TestDBSettings = TestDBSettings()
     celery: CelerySettings = CelerySettings()
     rabbit: RabbitSettings = RabbitSettings()
+    redis: RedisSettings = RedisSettings()
     alembic: AlembicSettings = AlembicSettings()
+    JWT: JWTSettings = JWTSettings()
     debug: bool = bool(int(config('DEBUG')))
     API_PREFIX: str = '/api/v1'
     BASE_DIR: Path = base_dir
