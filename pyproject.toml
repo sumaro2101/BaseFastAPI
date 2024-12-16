@@ -20,8 +20,8 @@ alembic = "^1.14.0"
 pytest = "^8.3.3"
 prometheus-fastapi-instrumentator = "^7.0.0"
 fastapi-users = {extras = ["sqlalchemy"], version = "^14.0.0"}
-redis = "^5.2.1"
-aioredis = "^2.0.1"
+redis = {extras = ["redis"], version = "^5.2.1"}
+fastapi-cache2 = "^0.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
