@@ -140,20 +140,14 @@ def struct_options_statment(model: BaseModel,
     Returns:
         Select: Экземпляр запроса
     """
-    if one_to_many and many_to_many:
-        stmt = (Select(model)
-                .filter_by(**kwargs)
-                .options(selectinload(*one_to_many))
-                .options(joinedload(*many_to_many)))
-    elif one_to_many:
-        stmt = (Select(model)
-                .filter_by(**kwargs)
-                .options(selectinload(*one_to_many)))
-    elif many_to_many:
-        stmt = (Select(model)
-                .filter_by(**kwargs)
-                .options(joinedload(*many_to_many)))
-    else:
-        stmt = (Select(model)
-                .filter_by(**kwargs))
+    stms_one_to_many = ([selectinload(join) for join in one_to_many]
+                        if one_to_many
+                        else list())
+    stmt_any_to_many = ([joinedload(join)for join in many_to_many]
+                        if many_to_many
+                        else list())
+    stmt = (Select(model)
+            .filter_by(**kwargs)
+            .options(*stms_one_to_many)
+            .options(*stmt_any_to_many))
     return stmt
