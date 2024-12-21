@@ -143,16 +143,16 @@ def struct_options_statment(model: BaseModel,
     if one_to_many and many_to_many:
         stmt = (Select(model)
                 .filter_by(**kwargs)
-                .options(joinedload(*one_to_many))
-                .options(selectinload(*many_to_many)))
+                .options(selectinload(*one_to_many))
+                .options(joinedload(*many_to_many)))
     elif one_to_many:
         stmt = (Select(model)
                 .filter_by(**kwargs)
-                .options(joinedload(*one_to_many)))
+                .options(selectinload(*one_to_many)))
     elif many_to_many:
         stmt = (Select(model)
                 .filter_by(**kwargs)
-                .options(selectinload(*many_to_many)))
+                .options(joinedload(*many_to_many)))
     else:
         stmt = (Select(model)
                 .filter_by(**kwargs))
