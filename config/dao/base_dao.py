@@ -26,6 +26,7 @@ class BaseDAO:
         items = ModelDAO.find_all_items_by_args(
             session = session,
             one_to_many = (Model.tag,),
+            many_to_many = (Model.users, Model.stations,)
             name='model',
         )
         # Создание сущности
@@ -108,15 +109,34 @@ class BaseDAO:
                   session: AsyncSession,
                   **values,
                   ) -> BaseModel:
-        async with session.begin():
-            instance = cls.model(**values)
-            session.add(instance=instance)
-            try:
-                await session.commit()
-            except SQLAlchemyError as ex:
-                await session.rollback()
-                raise ex
-            return instance
+        instance = cls.model(**values)
+        session.add(instance=instance)
+        try:
+            await session.commit()
+        except SQLAlchemyError as ex:
+            await session.rollback()
+            raise ex
+        return instance
+
+    @classmethod
+    async def update(cls,
+                     session: AsyncSession,
+                     instance: BaseModel,
+                     **values,
+                     ) -> BaseModel:
+        [setattr(instance, name, value)
+         for name, value
+         in values.items()]
+        await session.commit()
+        return instance
+
+    @classmethod
+    async def delete(cls,
+                     session: AsyncSession,
+                     instance: BaseModel,
+                     ) -> None:
+        await session.delete(instance)
+        await session.commit()
 
 
 def struct_options_statment(model: BaseModel,
