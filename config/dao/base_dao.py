@@ -26,6 +26,7 @@ class BaseDAO:
         items = ModelDAO.find_all_items_by_args(
             session = session,
             one_to_many = (Model.tag,),
+            many_to_many = (Model.users, Model.stations,)
             name='model',
         )
         # Создание сущности
