@@ -9,8 +9,9 @@ from asgi_lifespan import LifespanManager
 from fastapi import FastAPI
 from sqlalchemy.pool import NullPool
 
-from config import test_connection, settings, BaseModel
+from config import test_connection, settings
 from config import db_connection
+from config.models.base import Base
 from api_v1.routers import register_routers
 
 
@@ -37,9 +38,9 @@ async def app() -> AsyncGenerator[LifespanManager, Any]:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         async with db_setup.engine.begin() as conn:
-            await conn.run_sync(BaseModel.metadata.create_all)
+            await conn.run_sync(Base.metadata.create_all)
             yield
-            await conn.run_sync(BaseModel.metadata.drop_all)
+            await conn.run_sync(Base.metadata.drop_all)
 
     app = FastAPI(docs_url=None,
                   redoc_url=None,
@@ -67,3 +68,15 @@ async def client(app: FastAPI) -> AsyncGenerator[httpx.AsyncClient, Any]:
 async def get_async_session():
     async with db_setup.session() as session:
         yield session
+
+
+@pytest.fixture()
+def user_test_data():
+    data = {
+        "email": "user@example.com",
+        "password": "password",
+        "is_active": True,
+        "is_superuser": False,
+        "is_verified": False,
+    }
+    return data

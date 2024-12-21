@@ -27,7 +27,7 @@ class AlembicSettings(BaseModel):
     Настройки Alembic
     """
     CONFIG_PATH: Path = Path('alembic.ini')
-    MIGRATION_PATH: Path = Path('async_alembic/')
+    MIGRATION_PATH: Path = Path('async_alembic')
 
 
 class TestDBSettings(BaseModel):

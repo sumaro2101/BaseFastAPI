@@ -29,7 +29,7 @@ class DataBaseHelper:
         :function:`DataBaseHelper.session_geter` - Получение генератора текущей сессии.
         :function:`DataBaseHelper.get_scoped_session` - Получение текущей сессии.
         :function:`DataBaseHelper.dispose` - Закрытые соединения.
-    
+
     ## Примеры:
     ```python
     from fastapi import FastAPI

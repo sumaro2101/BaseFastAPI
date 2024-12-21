@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi_users import FastAPIUsers
+from fastapi_cache.decorator import cache
 
 from config.models import User
 from api_v1.auth.backends import auth_backend
@@ -18,11 +19,11 @@ router = APIRouter()
 
 
 @router.get(path='/test',
-            response_model=UserRead,
             dependencies=[Depends(active_user)],
             )
+@cache()
 async def test_end_point(user: User = Depends(active_user)):
-    return user
+    return dict(name=user.email)
 
 
 router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate),
