@@ -1,13 +1,16 @@
+from typing import TypeVar, Generic
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import Select
 from sqlalchemy.orm import joinedload, selectinload
 from typing import ClassVar, Sequence
 
-from config import BaseModel
+
+T_co = TypeVar('T_co', covariant=True)
 
 
-class BaseDAO:
+class BaseDAO(Generic[T_co]):
     """
     Базовый DAO класс для CRUD модели
 
@@ -36,31 +39,31 @@ class BaseDAO:
             name='model',
             )
     """
-    model: ClassVar[BaseModel | None] = None
+    model: ClassVar[T_co | None] = None
 
     @classmethod
     async def find_item_by_args(cls,
                                 session: AsyncSession,
-                                one_to_many: Sequence[BaseModel] | None = None,
-                                many_to_many: Sequence[BaseModel] | None = None,
+                                one_to_many: Sequence[T_co] | None = None,
+                                many_to_many: Sequence[T_co] | None = None,
                                 **kwargs: dict[str, str | int],
-                                ) -> BaseModel:
+                                ) -> T_co:
         """
         Нахождение и возращение сущности
 
         Args:
             session (AsyncSession): Текущая сессия
 
-            one_to_many (Sequence[BaseModel] | None, optional): Выбранные поля
+            one_to_many (Sequence[T_co] | None, optional): Выбранные поля
                 для one_to_many
                 которые имеют отношение например: (Product.user)
 
-            many_to_many (Sequence[BaseModel] | None, optional): Выбранные поля
+            many_to_many (Sequence[T_co] | None, optional): Выбранные поля
                 для many_to_many
                 которые имеют отношение например: (Product.categories)
 
         Returns:
-            BaseModel: Сущность из выборки
+            T_co: Сущность из выборки
         """
         stmt = struct_options_statment(
             model=cls.model,
@@ -74,26 +77,26 @@ class BaseDAO:
     @classmethod
     async def find_all_items_by_args(cls,
                                      session: AsyncSession,
-                                     one_to_many: Sequence[BaseModel] | None = None,
-                                     many_to_many: Sequence[BaseModel] | None = None,
+                                     one_to_many: Sequence[T_co] | None = None,
+                                     many_to_many: Sequence[T_co] | None = None,
                                      **kwargs: dict[str, str | int],
-                                     ) -> list[BaseModel]:
+                                     ) -> list[T_co]:
         """
         Нахождение и возращение множества сущностей
 
         Args:
             session (AsyncSession): Текущая сессия
 
-            one_to_many (Sequence[BaseModel] | None, optional): Выбранные поля
+            one_to_many (Sequence[T_co] | None, optional): Выбранные поля
                 для one_to_many
                 которые имеют отношение например: (Product.user)
 
-            many_to_many (Sequence[BaseModel] | None, optional): Выбранные поля
+            many_to_many (Sequence[T_co] | None, optional): Выбранные поля
                 для many_to_many
                 которые имеют отношение например: (Product.categories)
 
         Returns:
-            BaseModel: Сущности из выборки
+            T_co: Сущности из выборки
         """
         stmt = struct_options_statment(
             model=cls.model,
@@ -108,7 +111,7 @@ class BaseDAO:
     async def add(cls,
                   session: AsyncSession,
                   **values,
-                  ) -> BaseModel:
+                  ) -> T_co:
         instance = cls.model(**values)
         session.add(instance=instance)
         try:
@@ -121,9 +124,9 @@ class BaseDAO:
     @classmethod
     async def update(cls,
                      session: AsyncSession,
-                     instance: BaseModel,
+                     instance: T_co,
                      **values,
-                     ) -> BaseModel:
+                     ) -> T_co:
         [setattr(instance, name, value)
          for name, value
          in values.items()]
@@ -133,15 +136,15 @@ class BaseDAO:
     @classmethod
     async def delete(cls,
                      session: AsyncSession,
-                     instance: BaseModel,
+                     instance: T_co,
                      ) -> None:
         await session.delete(instance)
         await session.commit()
 
 
-def struct_options_statment(model: BaseModel,
-                            one_to_many: Sequence[BaseModel] | None = None,
-                            many_to_many: Sequence[BaseModel] | None = None,
+def struct_options_statment(model: T_co,
+                            one_to_many: Sequence[T_co] | None = None,
+                            many_to_many: Sequence[T_co] | None = None,
                             **kwargs: dict[str, str | int],
                             ) -> Select:
     """
