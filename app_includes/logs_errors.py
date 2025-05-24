@@ -85,7 +85,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(InvalidResetPasswordToken)
     async def password_token_error_handler(
@@ -101,7 +101,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(InvalidVerifyToken)
     async def verify_token_error_handler(
@@ -117,7 +117,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(UserAlreadyVerified)
     async def user_exists_error_handler(
@@ -133,7 +133,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(UserInactive)
     async def user_activity_error_handler(
@@ -149,7 +149,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(UserNotExists)
     async def user_not_exists_error_handler(
@@ -165,7 +165,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(UserAlreadyExists)
     async def user_already_exists_error_handler(
@@ -181,7 +181,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(InvalidID)
     async def invalid_id_error_handler(
@@ -197,7 +197,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(PasswordNotValidError)
     async def password_validator_error_handler(
@@ -213,7 +213,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(ValidationError)
     async def validation_error_handler(
@@ -229,7 +229,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(HTTPException)
     async def http_error_handler(
@@ -245,7 +245,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
 
     @app.exception_handler(Exception)
     async def error_handler(
@@ -261,7 +261,7 @@ def register_errors(app: FastAPI) -> None:
             error_code=500,
             message=HTTPStatus(500).phrase,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=500)
 
     @app.exception_handler(StarletteHTTPException)
     async def validation_starlette_error_handler(
@@ -277,4 +277,4 @@ def register_errors(app: FastAPI) -> None:
             error_code=exc.status_code,
             message=exc.detail,
         )
-        return JSONResponse(response)
+        return JSONResponse(response, status_code=exc.status_code)
